@@ -3,7 +3,7 @@
 
 const familyData = {
   data: {
-    id: 'Adam',
+    id: '',
   },
   children: [
     // {
@@ -23,9 +23,7 @@ const familyData = {
 const update = () => {
   const svg = d3.select('svg');
 
-  // const width = document.body.clientWidth;
   const width = 1280;
-  // const height = document.body.clientHeight;
   const height = 720;
 
   const margin = { top: 0, right: 175, bottom: 0, left: 20 };
@@ -68,7 +66,6 @@ const update = () => {
     .attr('x', d => d.y)
     .attr('y', d => d.x)
     .attr('dy', '.32em')
-    // .attr('text-anchor', d => (d.children ? 'middle' : 'start'))
     .text(d => d.data.data.id);
 
   g.exit().remove();
@@ -82,13 +79,21 @@ const doUpdate = () => {
   svg.selectAll('*').remove();
   update();
 };
+
 const addParentRecursive = (child, parent, family = familyData.children) => {
   let newPerson = { data: { id: parent } };
+  // if user not input parent name && there is no name at rood node
+  if (parent === 'parent name' && familyData.data.id === '') {
+    familyData.data.id = child;
+    return doUpdate();
+  }
+
   // if at root, do not traverse children, instead push directly into children
-  if (child === 'Adam') {
+  if (child === familyData.data.id) {
     familyData.children.push(newPerson);
     return doUpdate();
   }
+
   // traverse children array
   for (let i = 0; i < family.length; ++i) {
     let current = family[i];

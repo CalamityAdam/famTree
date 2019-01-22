@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>👨‍👩‍👦‍👦🌴</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Playfair+Display"
+      rel="stylesheet"
+    />
+    <link href="styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container">
+      <script src="https://d3js.org/d3.v5.min.js"></script>
+      <script>
+        function handleClick() {
+          const child = document.getElementById('child').value;
+          const parent = document.getElementById('parent').value;
+          addParentRecursive(child, parent);
+        }
+      </script>
+      <h1>👨‍👩‍👦‍👦🌴</h1>
+      <form>
+        <input type="text" value="child name" id="child" />
+        <input type="text" value="parent name" id="parent" />
+        <button type="button" onclick="handleClick()">add parent</button>
+      </form>
+      <svg></svg>
+      <script src="script.js"></script>
+    </div>
+  </body>
+</html>

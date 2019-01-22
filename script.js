@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 /* eslint-disable no-undef */
 
 const familyData = {
@@ -18,6 +19,7 @@ const familyData = {
   ],
 };
 
+// save the tree layout in a function we can call later when information is updated
 const update = () => {
   const svg = d3.select('svg');
 
@@ -39,7 +41,7 @@ const update = () => {
   const g = zoomG
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top})`);
-
+  // handle zoom and moving around of tree
   svg.call(
     d3.zoom().on('zoom', () => {
       zoomG.attr('transform', d3.event.transform);
@@ -71,47 +73,42 @@ const update = () => {
 
   g.exit().remove();
 };
+// initialize the tree by default...
 update();
 
-// eslint-disable-next-line max-statements
+const doUpdate = () => {
+  // find svg, select EVERYTHING inside of it and remove, then initialize with update (or original) data
+  const svg = d3.select('svg');
+  svg.selectAll('*').remove();
+  update();
+};
 const addParentRecursive = (child, parent, family = familyData.children) => {
-  console.log('child', child);
-  console.log('parent', parent);
   let newPerson = { data: { id: parent } };
-  let personFound = false;
+  // if at root, do not traverse children, instead push directly into children
   if (child === 'Adam') {
     familyData.children.push(newPerson);
-    console.log(familyData);
-    const svg = d3.select('svg');
-    svg.selectAll('*').remove();
-    update();
-    return;
+    return doUpdate();
   }
+  // traverse children array
   for (let i = 0; i < family.length; ++i) {
-    if (personFound) return;
     let current = family[i];
+    // if at person is who we're looking for
     if (current.data.id === child) {
+      // if they have a children array push into the children array
       if (current.children) {
         current.children.push(newPerson);
-        personFound = true;
-        const svg = d3.select('svg');
-        svg.selectAll('*').remove();
-        update();
-        return;
+        return doUpdate();
+        // else create children array with new person at index 0
       } else {
-        personFound = true;
         current.children = [newPerson];
-        const svg = d3.select('svg');
-        svg.selectAll('*').remove();
-        update();
-        return;
+        return doUpdate();
       }
     }
+    // if not at person we're looking for and they have an array of children, recursively search through their children array
     if (current.children) {
       addParentRecursive(child, parent, current.children);
     }
   }
-  const svg = d3.select('svg');
-  svg.selectAll('*').remove();
-  update();
+  // failsafe - no errors, just do update
+  return doUpdate();
 };
